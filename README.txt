@@ -5,13 +5,15 @@ A working function generator where user can set:
 	- wave type
 	- sweep parameters (and run sweep)
 
+Resource usage: Storage 30%, DRAM 20%.
+
 Updates from v1.2:
 - Controller and Function Generator classes implemented in .h and .cpp files.
 - Sketch reduced two method calls.
 
 Version history:
 
-v1.2
+v1.2 (29% 26%)
 
 A working function generator where user can set:
 	- frequency

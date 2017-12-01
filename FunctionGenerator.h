@@ -1,6 +1,3 @@
-/* Created using arduino.cc/en/Hacking/LibraryTutorial
-*/
-
 #ifndef FunctionGenerator_h
 #define FunctionGenerator_h
 

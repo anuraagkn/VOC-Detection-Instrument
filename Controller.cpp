@@ -2,29 +2,31 @@
 #include "Controller.h"
 #include "FunctionGenerator.h"
 
-FunctionGenerator fg(1.3, 2.2, SINE);
+FunctionGenerator fg(10000.0, 20.0, SINE); // 10kHz 20V sine wave
 
 Controller::Controller(bool w)
 {
 	wait = w;
-	
 }
 
+// called in Arduino setup
 void Controller::bootInstrument()
 {
 	SPI.begin();
-	fg.AD9833Reset();
+	fg.AD9833Reset();	// reset ad9833
 	delay(50);
-	Serial.begin(9600); // open serial port
+	
+	Serial.begin(9600); 	// open serial port
 	Serial.println(F("<INSTRUMENT IS READY>"));
 }
 
+// get the next operator in the SCPI command
 void Controller::getNextOperator() 
 {
 	static byte ndx = 0;
 
 	// define markers
-	char startMarker		= ':';
+	char startMarker	= ':';
 	char stopMarker		= ';';
 	char spaceMarker	= ' ';
 	char openMarker		= '{';
@@ -55,6 +57,7 @@ void Controller::getNextOperator()
 	}
 }
 
+// implement the operator
 void Controller::operate()
 {
 	if (wait == true) {

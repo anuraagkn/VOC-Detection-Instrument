@@ -1,6 +1,3 @@
-/* Created using arduino.cc/en/Hacking/LibraryTutorial
-*/
-
 #ifndef Controller_h
 #define Controller_h
 #define OP_SIZE 32

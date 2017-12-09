@@ -1,9 +1,5 @@
-Controller version 2.0 by Anruaag Narang
+Controller version 2.3 by Anruaag Narang
 
 Functionality:
-- read the root of a command and set the corresponding root node
-- return error if command is terminated prematurely
-
-Changes from version 1:
-'Proper' SCPI command handling - while v1 processes SCPI commands successfully, 
-				it also allows for invalid commands to be implemented succesfully
+- process and entire command
+- simulate assignment and query of parameter

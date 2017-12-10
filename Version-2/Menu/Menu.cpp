@@ -69,7 +69,7 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf,
 		Serial.println(F("Validating leaf node"));
 		if (start != ':')
 		{
-			error(1, menuNode, ":");
+			error(1, ":", menuNode);
 		}
 		else if (name == START || name == STOP || name == SCALE || name == STEP || name == INTERVAL || name == VOLTAGE || name == WAVETYPE)
 		{

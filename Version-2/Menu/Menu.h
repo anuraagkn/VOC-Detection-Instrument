@@ -6,8 +6,7 @@
 
 // nodes
 	//source/
-#define	FREQUENCY		"FREQuency"
-#define WAVETYPE		"WAVEtype"
+#define	FREQUENCY	"FREQuency"
 
 // leaf nodes
 //syst/
@@ -30,23 +29,20 @@ public:
 	
 	bool err;
 	bool qry;
-	String menuNode;
 
-	bool validateNode(String&, bool&, bool&, bool&, char&, char&);
+	void validateNode(String&, bool&, bool&, bool&, char&, char&);
 	void error(int, String, String);	// print requested error statement
 	void reset();
-	void setRoot(String& r);
-	void goToMenu(String& node); // call menu for node
-	void query();	
+	void setRoot(String&);// not in use
+	void goToMenu(String&); // not in use
+	void query(String&);	
 	void assign(String&);
 	
 	// output menu
 private:
 	
 	String menuRoot;
-	//String menuNode;
+	String menuNode;
 	String menuLeaf;
-	bool sys;
-	bool src;
 
 };

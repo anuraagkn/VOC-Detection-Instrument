@@ -6,8 +6,6 @@ Menu::Menu()
 {
 	err = false;
 	qry = false;
-	//sys = false;
-	//src = false;
 }
 
 void Menu::reset()
@@ -16,7 +14,7 @@ void Menu::reset()
 	qry = false;
 }
 
-bool Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf,
+void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf,
 						char& start, char& stop)
 {	
 	// validate root node
@@ -88,9 +86,15 @@ bool Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf,
 		}
 		else { error(3, "", name); }
 	}
+
+	//return err;
 }
 
-void Menu::query() {}
+void Menu::query(String& param) 
+{
+	Serial.println("Querying " + param);
+	qry = false;
+}
 
 void Menu::assign(String& val)
 {

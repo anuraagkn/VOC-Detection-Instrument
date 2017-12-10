@@ -1,14 +1,14 @@
 #include <Controller.h>
-#include <FunctionGenerator.h>
+#include <Menu.h>
 
-Controller c(false);
+Controller c;
 
 void setup()
 {
-    c.bootInstrument();
+    c.boot();
 }
 
 void loop()
 {
-    c.operate();
+    c.processCommand();
 }

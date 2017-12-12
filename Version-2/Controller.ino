@@ -1,5 +1,6 @@
 #include <Controller.h>
 #include <Menu.h>
+#include <FunctionGenerator.h>
 
 Controller c;
 

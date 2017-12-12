@@ -7,15 +7,16 @@
 // nodes
 	//source/
 #define	FREQUENCY	"FREQuency"
+#define WAVETYPE	"WAVEtype"
 
 // leaf nodes
 //syst/
 #define RESET		"RESEt" // not yet implemented
 //source/frequency/
-#define START		"STARt"
+#define START		(String)"STARt"
 #define STOP		"STOP"
 #define SCALE		"SCALe"
-#define STEP		"STEP"
+#define HOLD		"HOLD"
 #define INTERVAL	"INTErval"
 #define SWEEP		"SWEEp"
 //source/
@@ -30,11 +31,13 @@ public:
 	bool err;
 	bool qry;
 
-	void validateNode(String&, bool&, bool&, bool&, char&, char&);
+	void setSource();
+
+	void validateNode(String&, bool&, bool&, bool&, bool&, char&, char&);
 	void error(int, String, String);	// print requested error statement
 	void reset();
-	void setRoot(String&);// not in use
-	void goToMenu(String&); // not in use
+	void setRoot(String&);
+	void goToMenu(String&); // call menu for node
 	void query(String&);	
 	void assign(String&);
 	

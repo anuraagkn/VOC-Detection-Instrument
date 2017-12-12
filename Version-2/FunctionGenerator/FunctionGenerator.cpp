@@ -1,11 +1,13 @@
 #include "Arduino.h"
 #include "FunctionGenerator.h"
+//#include "Menu.h"
 
-FunctionGenerator::FunctionGenerator(float f, float a, int w)
+// digi pot instance 1
+// digi pot instance 2
+
+FunctionGenerator::FunctionGenerator()
 {
-	freq = f;	// Hz
-	ampl = a;	// V
-	wave = w;
+
 }
 
 void FunctionGenerator::AD9833Reset()
@@ -34,32 +36,37 @@ void FunctionGenerator::AD9833Write(int data)
 // adapt this to set either stop or start freq
 
 //////////
-void FunctionGenerator::setFreq(float f)// string end
+void FunctionGenerator::setFreq(String s, String f)// string end
 {
+	// assign frequency value
+	if (s == "STARt")				// assign start frequency
+	{ 
+		freq = f.toFloat();			// convert to float and set
+		long freqWord = (freq * pow(2, 28)) / CLK_AD9833;
 
-	// if end = start
-	freq = f; // assign frequency value
-	// else if end = stop
-	// stopFreq = f
-	
-	
-	// set the frequency value on the 9833
+		// set the frequency value on the 9833
 
-	long freqWord = (freq * pow(2, 28)) / CLK_AD9833;
+		int MSB = (int)((freqWord & 0xFFFC000) >> 14);    //Only lower 14 bits are used for data
+		int LSB = (int)(freqWord & 0x3FFF);
 
-	int MSB = (int)((freqWord & 0xFFFC000) >> 14);    //Only lower 14 bits are used for data
-	int LSB = (int)(freqWord & 0x3FFF);
+		//Set control bits 15 ande 14 to 0 and 1, respectively, for frequency register 0
+		LSB |= 0x4000;
+		MSB |= 0x4000;
 
-	//Set control bits 15 ande 14 to 0 and 1, respectively, for frequency register 0
-	LSB |= 0x4000;
-	MSB |= 0x4000;
+		// write data
+		AD9833Write(0x2100);
+		AD9833Write(LSB);     // Write lower 16 bits to AD9833 registers
+		AD9833Write(MSB);     // Write upper 16 bits to AD9833 registers.
+		AD9833Write(0xC000);  // Phase register
+		AD9833Write(wave);    // Exit & Reset to wave
 
-	// write data
-	AD9833Write(0x2100);
-	AD9833Write(LSB);     // Write lower 16 bits to AD9833 registers
-	AD9833Write(MSB);     // Write upper 16 bits to AD9833 registers.
-	AD9833Write(0xC000);  // Phase register
-	AD9833Write(wave);    // Exit & Reset to wave
+		Serial.println("Start freq set to " + String(freq));
+	}
+	else if (s == "STOP")			// assign stop frequency
+	{ 
+		stopFreq = f.toFloat();		// convertto float and set
+		Serial.println("Stop freq set to " + String(stopFreq));
+	}
 
 	//String freqString = String(freq);
 	//Serial.println("Frequency set to " + freqString + "Hz"); // test
@@ -67,60 +74,84 @@ void FunctionGenerator::setFreq(float f)// string end
 
 void FunctionGenerator::setAmp(String a)
 {
-	
+	//0 - 128 steps
+	// max practival value = 70
+	// above 70: gain too small, signal noisy
+
+	// this method works theoretically, 
+	// in practice, all the steps of the pot 
+	// will not be usable due to the distortion (low R)
+	// and clipping (high R)
+
+
 }
 
 void FunctionGenerator::setWave(String w)
 {
-	if (w == "SINE?") { wave = SINE; }
-	else if (w == "SQUARE?") { wave = SQUARE; }
-	else if (w == "TRIANGLE?") { wave = TRIANGLE; }
+	if (w == "SINE") { wave = SINE; }
+	else if (w == "SQUARE") { wave = SQUARE; }
+	else if (w == "TRIANGLE") { wave = TRIANGLE; }
 
-	if (w == "SINE?" || w == "SQUARE?" || w == "TRIANGLE?") {
+	if (w == "SINE" || w == "SQUARE" || w == "TRIANGLE") {
 		SPI.setDataMode(SPI_MODE2); // set AD9833 SPI mode
 		AD9833Write(wave);        // tell the 9833 the register value
+		Serial.println("Wave type set to " + w);
 	}
 	else { Serial.println(F("Error: Invalid waveform. Please enter a command with a valid waveform choice (SINE?, SQUARE?, TRIANGLE?).")); }
 }
 
-////// re-do this
-/*
-void FunctionGenerator::sweep(float sf, float fs, String s, float i, int t)
+void FunctionGenerator::setScale(String s)
 {
-	float startFreq = sf; // set start frequency
-	Serial.println(F("Start freq set")); // test
+	scale = s;
+	Serial.println("Scale set to " + scale);
+}
 
-	float stopFreq = fs;  // set stop frequency
-	Serial.println(F("stop freq set")); // test
+void FunctionGenerator::setInterval(String i)
+{
+	interval = i.toFloat();
+	Serial.println("Interval set to " + String(interval));
+}
 
-	String scale = s;                // set scale
-	Serial.println("scale set to " + s); // test
+void FunctionGenerator::setHold(String h)
+{
+	hold = 1000 * h.toFloat();	// convert to milliseconds
+	Serial.println("Hold set to " + String(hold));
+}
 
-	float interval = i;  // set interval
-	Serial.println("interval set to " + String(interval)); // test
+// sweep the defined frequency range
+// called when user initiates frequency range
+//GUI: Don't write start freq until sweep called
+void FunctionGenerator::sweep(String b)
+{
+	if (b == "BEGIn")
+	{
+		// compute linear frequency increment
+		float incFreq = (stopFreq - freq) / interval;
+		Serial.println("Inc freq set to " + String(incFreq));
 
-	int sweepTime = 1000 * t;     // set time per frequency in microseconds
-	Serial.println("time set to" + String(sweepTime)); // test
+		// initialise sweep frequency
+		float sweepFreq = freq;
+		Serial.println("Sweep freq initialised to " + String(freq));
 
-	float incFreq = (stopFreq - startFreq) / interval; // set increment
-	Serial.println("inc freq set to " + String(incFreq)); // test
+		// sweep the freqeuency range
+		while (sweepFreq <= stopFreq)	// stop when sweep frequency passes max
+		{
+			setFreq(String("STARt"), String(sweepFreq));	// set frequency to sweep frequency
+			delay(hold);		// hold the frequency for the defined time
 
-	float sweepFreq = startFreq;              // initialise sweep frequency
-	Serial.println("sweep freq initialised to " + String(sweepFreq)); // test
-
-																	  // sweep the freqeuency range
-	while (sweepFreq <= stopFreq) {
-		//Serial.println(F("reached here"));
-		setFreq(sweepFreq);
-		delay(sweepTime);
-		//Serial.println(F("reached here"));
-
-		// increment frequency by interval
-		if (scale == "LIN") {
-			sweepFreq = sweepFreq + incFreq;
-			//Serial.println(F("sweep freq incremented)");
+			// increment sweep frequency based on the scale
+			if (scale == "LIN") { sweepFreq = sweepFreq + incFreq; }
 		}
-		//Serial.println(F("reached here"));
+	}
+	else
+	{
+		Serial.println("Error: invalid command " + b);
 	}
 }
+
+/*
+If pump flag high:
+	turn off func gen
+	pump for predefined time
+	inc freq and turn on func gen
 */

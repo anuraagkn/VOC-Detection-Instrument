@@ -15,10 +15,13 @@ Controller::Controller()
 // boot instrument
 void Controller::boot()
 {
-	SPI.begin();		
-	Serial.begin(9600);							// open serial port
-	reset();
-	//Serial.println(F("<INSTRUMENT IS READY>")); // status message
+	// Arduino
+	SPI.begin();
+
+	Serial.begin(9600);	// open serial port once instrument has been setup
+
+	reset();			// reset controller parameters
+	menu.setSource();	// initialise function generator parameters
 }
 
 // reset flags
@@ -31,6 +34,7 @@ void Controller::reset()
 	val_node	= false;						// value not set
 	front		= false;						// start marker not
 	back   		= false;						// stop marker not set
+	//end_cmmd	= false;
 	Serial.println(F("<INSTRUMENT IS READY>"));	// status message
 }
 
@@ -80,6 +84,7 @@ void Controller::processCommand()
 		else if (menu.qry == false && val_node == false)
 		{
 			tempNode = readNode();	// get param value
+			setNode(tempNode, val_node);
 			menu.assign(tempNode);	// set param
 			
 			// reset command handler flags
@@ -141,12 +146,12 @@ String Controller::readNode()
 // set the node in the menu
 void Controller::setNode(String& node, bool& node_flag)
 {
-	menu.validateNode(tempNode, root_node, mid_node, leaf_node, frontMarker, backMarker);
+	menu.validateNode(tempNode, root_node, mid_node, leaf_node, val_node, frontMarker, backMarker);
 	if (menu.err == true)
 	{
 		node_flag = false;
+		Serial.println(F("Node not set"));
 		reset();
-		Serial.println(F("Root not set"));
 	}
 	else
 	{
@@ -154,8 +159,9 @@ void Controller::setNode(String& node, bool& node_flag)
 
 		String nodeName;
 		
-		if (leaf_node == true) { nodeName = "Leaf"; }
-		else if (mid_node == true) { nodeName = "Node"; }
+		if		(val_node == true)	{ nodeName = "Value"; }
+		else if (leaf_node == true) { nodeName = "Leaf"; }
+		else if (mid_node == true)	{ nodeName = "Node"; }
 		else if (root_node == true)
 		{
 			nodeName = "Root";
@@ -165,6 +171,7 @@ void Controller::setNode(String& node, bool& node_flag)
 		Serial.println(nodeName + " set to " + tempNode);
 
 		frontMarker = backMarker;
+		backMarker = 'n';
 		back = false;
 	}
 }

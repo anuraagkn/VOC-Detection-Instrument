@@ -1,9 +1,7 @@
-Controller version 2.4 by Anruaag Narang
+Controller version 2.5 by Anruaag Narang
 
 Functionality:
+- set function generator defaults on startup
 - process and entire command
-- simulate assignment and query of parameter
-
-Changelog:
-- included method for setting node, thus replacing repetitive code blocks
--begun integration of function generator
+- Simulate setting of function generator parameters (frequency, start frequency, stop frequency, hold, interval, scale)
+- Simualte frequency sweep

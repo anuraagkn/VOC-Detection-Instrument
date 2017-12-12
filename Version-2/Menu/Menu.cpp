@@ -1,11 +1,29 @@
 #include "Arduino.h"
 #include "Menu.h"
+#include "FunctionGenerator.h"
 
+FunctionGenerator fg;
 
 Menu::Menu()
 {
 	err = false;
 	qry = false;
+}
+
+void Menu::setSource()
+{
+	fg.AD9833Reset();
+
+	// set function generator defaults
+	fg.setFreq("STARt", String(1000.0));
+	//setAmp();
+	fg.setWave(String("SINE"));
+
+	// sweep defaults
+	fg.setFreq("STOP", String(10000.0)); // 10kHz
+	fg.setScale(String("LIN"));	// linear scale
+	fg.setInterval(String(9.0));	// 9 frequencies
+	fg.setHold(String(2));		// 2 seconds per frequency (1000 * 10 milliseconds)
 }
 
 void Menu::reset()
@@ -14,7 +32,7 @@ void Menu::reset()
 	qry = false;
 }
 
-void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf,
+void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& val,
 						char& start, char& stop)
 {	
 	// validate root node
@@ -69,9 +87,9 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf,
 		Serial.println(F("Validating leaf node"));
 		if (start != ':')
 		{
-			error(1, ":", menuNode);
+			error(1, menuNode, ":");
 		}
-		else if (name == START || name == STOP || name == SCALE || name == STEP || name == INTERVAL || name == VOLTAGE || name == WAVETYPE)
+		else if (name == START || name == STOP || name == SCALE || name == HOLD || name == INTERVAL || name == VOLTAGE || name == WAVETYPE || name == SWEEP)
 		{
 			if (stop != ' ' && stop != '?')
 			{
@@ -87,18 +105,48 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf,
 		else { error(3, "", name); }
 	}
 
+	// validade value node
+	else if (val == false)
+	{
+		Serial.println(F("Validating leaf node"));
+		if (start != ' ')
+		{
+			error(1, menuNode, " ");
+		}
+		else if (stop != 'n')
+		{
+			error(2, "", name);
+		}
+		// else value syntax is valid
+	}
+
 	//return err;
 }
 
 void Menu::query(String& param) 
 {
 	Serial.println("Querying " + param);
+
+
+
 	qry = false;
 }
 
 void Menu::assign(String& val)
 {
+	Serial.println("Assigning " + val);
+
+	if (menuLeaf == START) { fg.setFreq(START, val); }
+	else if (menuLeaf == VOLTAGE) {}
+	else if (menuLeaf == WAVETYPE) { fg.setWave(val); }
+	else if (menuLeaf == STOP) { fg.setFreq(STOP, val); }
+	else if (menuLeaf == SCALE) { fg.setScale(val); }
+	else if (menuLeaf == HOLD) { fg.setHold(val); }
+	else if (menuLeaf == INTERVAL) { fg.setInterval(val); }
+	else if (menuLeaf == SWEEP) { fg.sweep(val); }
+	//else {} error invalid command
 	Serial.println(val + " has been assigned");
+	
 
 }
 

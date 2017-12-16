@@ -1,1 +1,11 @@
-Controller by Anuraag Narang
+Controller version 2.6 by Anruaag Narang
+
+Functionality:
+- set function generator defaults on startup
+- process and entire command
+- Simulate setting of function generator parameters (voltage, frequency, start frequency, stop frequency, hold, interval, scale)
+- Simualte frequency sweep
+
+Changelog:
+- added set voltage functionality
+- updating naming convention

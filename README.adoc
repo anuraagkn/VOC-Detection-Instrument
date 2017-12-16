@@ -1,5 +1,7 @@
 Controller version 2.6 by Anruaag Narang
 
+*VERSION 1 AND 2 FOLDERS CONTAIN OLD IMPLEMENTATIONS*
+
 Functionality:
 - set function generator defaults on startup
 - process and entire command
@@ -7,5 +9,5 @@ Functionality:
 - Simualte frequency sweep
 
 Changelog:
-- added set voltage functionality
+- added set voltage functionality (OUTDATED. NEW TECHNIQUE DESCRIBED IN REPORT.)
 - updating naming convention

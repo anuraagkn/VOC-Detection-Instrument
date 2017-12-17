@@ -2,10 +2,17 @@ Controller version 2.6 by Anruaag Narang
 
 *VERSION 1 AND 2 FOLDERS CONTAIN OLD IMPLEMENTATIONS*
 
+Installation:
+- Save 'Controller.ino' in a folder called Controller.
+- Save the folders 'CommandHandler', 'Menu' and 'Source' in your Arduino libraries directory.
+- Load the Controller sketch onto your Arduino.
+
+*COMMAND LIST TO BE ADDED SOON*
+
 Functionality:
 - set function generator defaults on startup
 - process and entire command
-- Simulate setting of function generator parameters (voltage, frequency, start frequency, stop frequency, hold, interval, scale)
+- Simulate setting of function generator parameters (frequency, start frequency, stop frequency, hold, interval, scale)
 - Simualte frequency sweep
 
 Changelog:

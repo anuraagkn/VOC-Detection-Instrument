@@ -1,6 +1,6 @@
-# Project Title
+# Instrument Controller
 
-One Paragraph of project description goes here
+This repo contains source code for the back-end (and soon front-end) of a laboratory instrument controller. The back-end controller takes SCPI commands as input, then decodes and implements them in the instrument circuit.
 
 ## Getting Started
 
@@ -10,15 +10,16 @@ These instructions will get you a copy of the project up and running on your loc
 
 What things you need to install the software and how to install them
 
-```
-Give examples
-```
+* Arduino IDE with SPI library. See https://www.arduino.cc/en/Main/Software
 
 ### Installing
 
 A step by step series of examples that tell you have to get a development env running
 
 Say what the step will be
+* 1. Save 'Controller.ino' in a folder named 'Controller'.
+* 2. Save the folders 'CommandHandler', 'Menu' and 'Source' in the library directory of your Arduino IDE installation.
+* 3. Open 'Controller.ino' in the Arduino IDE and load the sketch onto your Arduino board.
 
 ```
 Give the example

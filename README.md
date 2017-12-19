@@ -42,7 +42,7 @@ End with an example of getting some data out of the system or using it for a lit
 
 * **Anuraag Narang** - [anuraagkn](https://github.com/anuraagkn)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/anuraagkn/VOC-Detection-Instrument/blob/master/Contributors.md) who participated in this project.
 
 ## Acknowledgments
 

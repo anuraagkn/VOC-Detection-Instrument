@@ -19,7 +19,7 @@
 // wavetype registers
 #define SINE        (int)0x2000
 #define SQUARE      (int)0x2028
-#define TRIANGLE    (int)0x2002
+#define TRIANGULAR   (int)0x2002
 
 class Source
 {
@@ -65,4 +65,8 @@ class Source
 		String scale;	// linear or log
 		float interval;	// number of frequencies
 		int hold;	// time spent at each frequency
+		float vDDS = 0.65;		// max AD9833 output
+		float rTwo = 47000.0;	// R2 in the voltage amp design
+		float rMax = 10000.0;	// maximum resistance of the digi pot
+		float N = 127.00;		// max step number on the pot (0 - 127)
 };

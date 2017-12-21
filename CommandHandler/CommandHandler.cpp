@@ -60,7 +60,7 @@ void CommandHandler::processCommand()
 			Serial.println(F("Reading node"));
 			tempNode = readNode(); // read node
 			
-			if (tempNode == "VOLTage" || tempNode == "WAVEtype")
+			if (tempNode == VOLTAGE || tempNode == WAVETYPE)
 			{
 				mid_node = true;
 				setNode(tempNode, leaf_node);
@@ -147,6 +147,7 @@ String CommandHandler::readNode()
 void CommandHandler::setNode(String& node, bool& node_flag)
 {
 	mn.validateNode(tempNode, root_node, mid_node, leaf_node, val_node, frontMarker, backMarker);
+	
 	if (mn.err == true)
 	{
 		node_flag = false;

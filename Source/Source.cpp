@@ -62,6 +62,7 @@ void Source::setFreq(String s, String f)// string end
 			AD9833Write(LSB);     // Write lower 16 bits to AD9833 registers
 			AD9833Write(MSB);     // Write upper 16 bits to AD9833 registers.
 			AD9833Write(0xC000);  // Phase register
+			SPI.setDataMode(SPI_MODE2); // set AD9833 SPI mode
 			AD9833Write(wave);    // Exit & Reset to wave
 
 			Serial.println("Start freq set to " + String(freq));
@@ -79,6 +80,17 @@ void Source::setFreq(String s, String f)// string end
 
 void Source::setAmp(String a)
 {
+	int n;
+
+	n = ((rTwo / ((a.toFloat() / vDDS) - 1)) / rMax) * N;
+	ampl = a.toFloat();	// set amplitude variable
+						// this can be returned in a query
+	// test statement
+	Serial.println("Amplitude set to " + String(ampl) + "V");
+	
+	/* OLD METHOD
+
+
 	//0 - 128 steps
 	// max practival value = 70
 	// above 70: gain too small, signal noisy
@@ -106,15 +118,17 @@ void Source::setAmp(String a)
 							// test statement
 		Serial.println("Amplitude set to " + String(ampl) + "V");
 	}
+	*/
 }
 
 void Source::setWave(String w)
 {
-	if (w == "SINE") { wave = SINE; }
-	else if (w == "SQUARE") { wave = SQUARE; }
-	else if (w == "TRIANGLE") { wave = TRIANGLE; }
+	if (w == "SINE" || w == "SQUAre" || w == "TRIangular") {
 
-	if (w == "SINE" || w == "SQUARE" || w == "TRIANGLE") {
+		if (w == "SINE") { wave = SINE; }
+		else if (w == "SQUAre") { wave = SQUARE; }
+		else if (w == "TRIangular") { wave = TRIANGULAR; }
+
 		SPI.setDataMode(SPI_MODE2); // set AD9833 SPI mode
 		AD9833Write(wave);        // tell the 9833 the register value
 		Serial.println("Wave type set to " + w);
@@ -147,6 +161,8 @@ void Source::sweep(String b)
 {
 	if (b == "BEGIn")
 	{
+		delay(1000);
+
 		// compute linear frequency increment
 		float incFreq = (stopFreq - freq) / interval;
 		Serial.println("Inc freq set to " + String(incFreq));

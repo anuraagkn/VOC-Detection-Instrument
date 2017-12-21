@@ -15,12 +15,12 @@ void Menu::setSource()
 	src.AD9833Reset();
 
 	// set function generator defaults
-	src.setFreq("STARt", String(1000.0));
+	src.setFreq(START, String(1000.0));
 	src.setAmp(String(10.0));
-	src.setWave(String("SINE"));
+	src.setWave(String("TRIangular"));
 
 	// sweep defaults
-	src.setFreq("STOP", String(10000.0)); // 10kHz
+	src.setFreq(STOP, String(10000.0)); // 10kHz
 	src.setScale(String("LIN"));	// linear scale
 	src.setInterval(String(9.0));	// 9 frequencies
 	src.setHold(String(2));		// 2 seconds per frequency (1000 * 10 milliseconds)

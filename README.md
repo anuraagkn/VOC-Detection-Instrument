@@ -21,17 +21,22 @@ Say what the step will be
 2. Save the folders 'CommandHandler', 'Menu' and 'Source' in the library directory of your Arduino IDE installation.
 3. Open 'Controller.ino' in the Arduino IDE and load the sketch onto your Arduino board.
 
-```
-Give the example
-```
+## Usage
 
-And repeat
+Command the instrument using the Serial Monitor. Parameters can be set or queried. Example:
 
 ```
-until finished
+:SOURce:FREQuency:STARt 5000
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+sets the source frequency, and the start frequency of the sweep to 5000Hz.
+
+```
+:SOURce:FREQuency:STARt?
+```
+Returns the source frequency.
+
+A full list of commands is available at: (Coming Soon)
 
 ## Built With
 

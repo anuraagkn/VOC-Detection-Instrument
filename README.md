@@ -14,9 +14,6 @@ What things you need to install the software and how to install them
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
-
-Say what the step will be
 1. Save 'Controller.ino' in a folder named 'Controller'.
 2. Save the folders 'CommandHandler', 'Menu' and 'Source' in the library directory of your Arduino IDE installation.
 3. Open 'Controller.ino' in the Arduino IDE and load the sketch onto your Arduino board.

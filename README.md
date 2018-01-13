@@ -40,7 +40,7 @@ A full list of commands is available at: (Coming Soon)
 
 ## Built With
 
-* [Arduino IDE 1.8.5](https://www.arduino.cc/en/Main/Software) - For writting Arduino running code
+* [Arduino IDE 1.8.5](https://www.arduino.cc/en/Main/Software) - For compiling and running the Arduino program
 * [Microsoft Visual Studio 2015](https://www.arduino.cc/en/Main/Software) - For writting the classes
 
 ## Authors

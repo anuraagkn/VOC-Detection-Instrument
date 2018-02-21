@@ -18,7 +18,7 @@ What things you need to install the software and how to install them
 #### Back-End
 1. Download the Controller folder and save it in a suitable location.
 2. Save the CommandHandler, Menu and Source libraries in the library directory of your Arduino IDE installation.
-3. From the Cntroller folder open Controller.ino in the Arduino IDE, then compile the sketch and load it onto an Arduino board.
+3. From the Controller folder open Controller.ino in the Arduino IDE, then compile the sketch and load it onto an Arduino board.
 
 #### Front-End (Coming Soon)
 

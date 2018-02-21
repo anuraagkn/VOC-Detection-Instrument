@@ -1,7 +1,0 @@
-Controller version 2.5 by Anruaag Narang
-
-Functionality:
-- set function generator defaults on startup
-- process and entire command
-- Simulate setting of function generator parameters (frequency, start frequency, stop frequency, hold, interval, scale)
-- Simualte frequency sweep

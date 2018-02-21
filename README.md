@@ -1,6 +1,6 @@
 # Instrument Controller
 
-This repo contains source code for the back-end and front-end of an laboratory instrument controller (still in development). The back-end controller takes SCPI-style commands as input, then decodes and implements them in the instrument circuit.
+This repo contains source code for the back-end and front-end of a laboratory instrument controller (still in development). The back-end controller takes SCPI-style commands as input, then decodes and implements them in the instrument circuit.
 
 ## Getting Started
 

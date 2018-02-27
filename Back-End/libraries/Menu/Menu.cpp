@@ -1,3 +1,10 @@
+/* Menu.cpp by Anuraag Narang
+
+This class validates nodes in recieved commands.
+Once a leaf node has been processed, the value is passed to the appropriate function.
+
+*/
+
 #include "Arduino.h"
 #include "Menu.h"
 #include "Source.h"
@@ -13,13 +20,11 @@ Menu::Menu()
 void Menu::setSource()
 {
 	src.AD9833Reset();
-
 	// set function generator defaults
 	src.setFreq(START, String(1000.0));
 	src.setAmp(String(10.0));
 	src.setWave(String("TRIangular"));
-
-	// sweep defaults
+	// auto experiment defaults
 	src.setFreq(STOP, String(10000.0)); // 10kHz
 	src.setScale(String("LIN"));	// linear scale
 	src.setPoints(String(9.0));	// 9 frequencies
@@ -31,6 +36,7 @@ void Menu::reset()
 {
 	err = false;
 	qry = false;
+	menuNode = " "; // need to reset menu node otherwise when setting voltage/wavetype, menuNode will not be read as " ".
 }
 
 void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& val,
@@ -39,7 +45,7 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& v
 	// validate root node
 	if (root == false)
 	{
-		Serial.println(F("Validating root node"));
+		//Serial.println(F("Validating root node"));
 		if (start != ':')
 		{
 			error(1, ":", "");
@@ -57,14 +63,14 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& v
 		// invalid root name
 		else
 		{
-			error(3, "", name);
+			//error(3, "", name);
+			error(3, "root", name);
 		}
 	}
-
 	// validate node
 	else if (mid == false)
 	{
-		Serial.println(F("Validating node"));
+		//Serial.println(F("Validating node"));
 		// for the valid root name
 		if (start != ':')
 		{
@@ -79,40 +85,40 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& v
 			else { menuNode = name; } // set node
 		}
 
-		else { error(3, "", name); }
+		else { //error(3, "", name);
+					error(3, "mid", name);}
 	}
-
 	// validate leaf node
 	else if (leaf == false)
 	{
-		Serial.println(F("Validating leaf node"));
+		//Serial.println(F("Validating leaf node"));
 		if (start != ':')
 		{
 			error(1, menuNode, ":");
 		}
 		else if ((menuNode == FREQUENCY && (name == START || name == STOP || name == SCALE || name == HOLD || name == INTERVAL || name == PPP
-			|| name == SWEEP || name == SWE))
-			|| (menuNode == PUMP && (name == VOLUME || name == TIME))
-			|| (menuNode == " " && (name == VOLTAGE || name == WAVETYPE)))
+			|| name == SWEEP || name == SWE))                               // frequency nodes
+			|| (menuNode == PUMP && (name == VOLUME || name == TIME))       // pump nodes
+			|| (menuNode == " " && (name == VOLTAGE || name == WAVETYPE)))  // other source nodes
 		{
 			if (stop != ' ' && stop != '?')
 			{
-				Serial.println("pad" + String(stop) + "pad");
+				//Serial.println("pad" + String(stop) + "pad"); // test
 				error(2, " \" or \"?", name);
 			}
 			else
 			{
 				menuLeaf = name;
-				if (stop == '?') { qry = true; Serial.println(F("qry set")); }
+				if (stop == '?') { qry = true; ; }//Serial.println(F("qry set")); }
 			}
 		}
-		else { error(3, "", name); }
+		else { //error(3, "", name);
+					error(3, "leaf", name);}
 	}
-
 	// validade value node
 	else if (val == false)
 	{
-		Serial.println(F("Validating leaf node"));
+		//Serial.println(F("Validating leaf node"));
 		if (start != ' ')
 		{
 			error(1, menuNode, " ");
@@ -125,19 +131,16 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& v
 	}
 }
 
+// currently not used for any purpose.
 void Menu::query(String& param)
 {
-	Serial.println("Querying " + param);
-
-
-
+	//Serial.println("Querying " + param);
 	qry = false;
 }
 
 void Menu::assign(String& val)
 {
-	Serial.println("Assigning " + val);
-
+	//Serial.println("Assigning " + val); // test
 	if (menuLeaf == START) { src.setFreq(START, val); }
 	else if (menuLeaf == VOLTAGE) { src.setAmp(val); }
 	else if (menuLeaf == WAVETYPE) { src.setWave(val); }
@@ -148,10 +151,8 @@ void Menu::assign(String& val)
 	else if (menuLeaf == SWEEP || menuLeaf == SWE) { src.sweep(val); }
 	else if (menuLeaf == VOLUME || menuLeaf == VOL) { src.setPumpFlow(val); }
 	else if (menuLeaf == TIME) { src.setPumpTime(val); }
-	//else {} error invalid command
-	Serial.println(val + " has been assigned");
-
-
+	//else {} error invalid command (no need for this since error should have been detected by now)
+	//Serial.println(val + " has been assigned"); // test
 }
 
 // error statements
@@ -165,10 +166,9 @@ void Menu::error(int s, String m, String n)
 	{
 		case 1: Serial.println("Error: Expected \"" + m + "\" before node \"" + n + "\""); break;
 		case 2: Serial.println("Error: Expected \"" + m + "\" after node \"" + n + "\""); break;
-		case 3: Serial.println("Error: Invalid node name \"" + n + "\""); break;
+		case 3: Serial.println("Error: Invalid node name \"" + n + "\"" + "(" + m + ")"); break;
 		//case 4: Serial.println(F("")); break;
 		//case 5: Serial.println(F("Error: ")); break;
 		default: Serial.println(F("Error: Invalid command.")); break;
 	}
-
 }

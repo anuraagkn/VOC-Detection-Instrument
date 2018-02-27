@@ -18,7 +18,7 @@
 #define SCALE		"SCALe"
 #define HOLD		"HOLD"
 #define INTERVAL	"INTErval"
-#define PPP			"PPPOINt" // not yer implemented
+#define PPP			"PPPOINt" // not yet implemented
 #define SWEEP		"SWEEP"
 #define SWE         "SWE"
 //source/
@@ -38,7 +38,6 @@ public:
 	bool qry;
 
 	void setSource();
-
 	void validateNode(String&, bool&, bool&, bool&, bool&, char&, char&);
 	void error(int, String, String);	// print requested error statement
 	void reset();
@@ -46,8 +45,6 @@ public:
 	void goToMenu(String&); // call menu for node
 	void query(String&);
 	void assign(String&);
-
-	// output menu
 private:
 
 	String menuRoot;

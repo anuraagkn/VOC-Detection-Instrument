@@ -1,0 +1,12 @@
+Controller version 2.8 by Anruaag Narang
+
+Functionality:
+- set function generator defaults on startup
+- process and entire command
+- Simulate setting of function generator parameters (voltage, frequency, start frequency, stop frequency, hold, interval, scale)
+- Simualte frequency sweep (linear and logarithmic)
+
+Changelog:
+- Fixed issue where level 2 leaf commands (voltage and wavetype) resulted in errors.
+	This was due to midNode string in Menu class not being reset after level 3 leaf command (e.g. frequency)
+	was carried out, which is problamatic since VOLTage and WAVEtype nodes are only valid if midNode is " " (default).

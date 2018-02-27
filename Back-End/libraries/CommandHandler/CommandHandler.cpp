@@ -44,13 +44,13 @@ void CommandHandler::processCommand()
 
 	if (Serial.available() > 0)
 	{
-		delayMicroseconds(25000); // allow time for entire command to be received by Arduino
-        //delay(2500);
+		//delayMicroseconds(25000); // allow time for entire command to be received by Arduino
+        delay(200);
 
 		// set root node
 		if (root_node == false)
 		{
-			Serial.println(F("Reading root node"));
+			//Serial.println(F("Reading root node"));
 			tempNode = readNode(); // read root node
 			setNode(tempNode, root_node);
 		}
@@ -58,7 +58,7 @@ void CommandHandler::processCommand()
 		// set next node
 		else if (mid_node == false)
 		{
-			Serial.println(F("Reading node"));
+			//Serial.println(F("Reading node"));
 			tempNode = readNode(); // read node
 
 			if (tempNode == VOLTAGE || tempNode == WAVETYPE)
@@ -76,7 +76,7 @@ void CommandHandler::processCommand()
 		// set leaf node
 		else if (leaf_node == false)
 		{
-			Serial.println(F("Reading leaf node 2"));
+			//Serial.println(F("Reading leaf node 2"));
 			tempNode = readNode(); // read leaf node
 			setNode(tempNode, leaf_node);
 		}
@@ -152,7 +152,7 @@ void CommandHandler::setNode(String& node, bool& node_flag)
 	if (mn.err == true)
 	{
 		node_flag = false;
-		Serial.println(F("Node not set"));
+		//Serial.println(F("Node not set"));
 		reset();
 		mn.reset();
 	}
@@ -171,7 +171,7 @@ void CommandHandler::setNode(String& node, bool& node_flag)
 			rdy = false;
 			//if (rdy == false) { Serial.println(F("Not ready")); }
 		}
-		Serial.println(nodeName + " set to " + tempNode);
+		//Serial.println(nodeName + " set to " + tempNode);
 
 		frontMarker = backMarker;
 		backMarker = ';';

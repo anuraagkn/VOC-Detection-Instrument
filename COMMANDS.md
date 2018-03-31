@@ -9,4 +9,14 @@
         :POINTs
         :PPPOINt
         :EXPEriment(EXP)
+:SOURce
+    :FREQuency(FREQ)
+    :VOLTage(VOLT)
+    :WAVEtype(WAVE)
+    :LAMP
+    :PUMP
+        :VOLUme(VOL)
+        :TIME
+        :POWEr(POW)
+ADD METER LATER
 ```

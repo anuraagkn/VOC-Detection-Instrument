@@ -14,9 +14,9 @@ Below is the structure to follow when oprating the instrument using commands. Wh
         :STOPFREQuency(STOPFREQ)        // set the stop frequency for an automated experiment
         :SCALe                          // set the scale of the automated experiment's frequency distribution
         :HOLD                           // set the hold time to spend at each frequency point
-        :POINTs
-        :PPPOINt
-        :EXPEriment(EXP)
+        :POINTs                         // set the number of frequency points to take measurements at
+        :PPPOINt                        // specify whether to resample the analyte at each frequency point
+        :EXPEriment(EXP)                // run an automated experiment
 :SOURce
     :FREQuency(FREQ)
     :VOLTage(VOLT)

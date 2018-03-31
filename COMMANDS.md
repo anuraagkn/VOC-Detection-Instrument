@@ -12,8 +12,8 @@ Below is the structure to follow when oprating the instrument using commands. Wh
     :AUTOmatic(AUTO)
         :STARtFREQuency(STARtFREQ)      // set the start frequency for an automated experiment
         :STOPFREQuency(STOPFREQ)        // set the stop frequency for an automated experiment
-        :SCALe
-        :HOLD
+        :SCALe                          // set the scale of the automated experiment's frequency distribution
+        :HOLD                           // set the hold time to spend at each frequency point
         :POINTs
         :PPPOINt
         :EXPEriment(EXP)

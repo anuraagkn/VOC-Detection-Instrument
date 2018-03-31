@@ -1,7 +1,11 @@
+/*
+Usage notes:
+- Although input doubles are rounded to two decimal places, an abnormaly large number 
+of decimal places may causes the system to fail.
+*/
+
 // instrument libraries
 #include <CommandHandler.h>
-#include <Menu.h>
-#include <Source.h>
 
 CommandHandler ch;  // instantiate command handler object
 
@@ -12,7 +16,8 @@ void setup()
 }
 
 // this code runs repeatedly
-void loop()
+void loop() 
 {
     ch.processCommand();  // check for and process a command
 }
+

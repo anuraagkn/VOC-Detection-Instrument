@@ -7,9 +7,9 @@ Once a leaf node has been processed, the value is passed to the appropriate func
 
 #include "Arduino.h"
 #include "Menu.h"
-#include "Source.h"
+#include "System.h"
 
-Source src;
+System sys; // system object
 
 Menu::Menu()
 {
@@ -17,18 +17,26 @@ Menu::Menu()
 	qry = false;
 }
 
-void Menu::setSource()
-{
+void Menu::setInstrument()
+{/*
 	src.AD9833Reset();
 	// set function generator defaults
 	src.setFreq(START, String(1000.0));
-	src.setAmp(String(10.0));
+	src.setAmp(String(3));
 	src.setWave(String("TRIangular"));
-	// auto experiment defaults
+    src.setLamp(String(100));       // default lamp brightness level
+    // auto experiment defaults
 	src.setFreq(STOP, String(10000.0)); // 10kHz
 	src.setScale(String("LIN"));	// linear scale
 	src.setPoints(String(9.0));	// 9 frequencies
 	src.setHold(String(2));		// 2 seconds per frequency (1000 * 10 milliseconds)
+	src.setPumpFlow(String(3));         // pump flow
+	src.setPumpTime(String(5));         // pump timer
+	src.setPPPoint("N");        // pump per frequency point
+
+	mtr.reset(src.freq, src.hold);
+	*/
+	sys.reset(); // reset system
 	menuNode = " "; // default mid node in case of two-node command
 }
 
@@ -45,61 +53,56 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& v
 	// validate root node
 	if (root == false)
 	{
-		//Serial.println(F("Validating root node"));
-		if (start != ':')
+		if (start != ':'){ error(1, ":", ""); }
+		else if (name == SYSTEM || name == SYST || name == SOURCE/* || name == METER*/) // check for other possible roots here
 		{
-			error(1, ":", "");
-		}
-		else if (name == SYSTEM || name == SOURCE) // check for other possible roots here
-		{
-			//Serial.println("Name = " + name); //test
 			// validate start marker
-			if (stop != ':')
-			{
-				error(2, ":", name);
-			}
+			if (stop != ':'){ error(2, ":", name); }
 			else { menuRoot = name; } // set root
 		}
 		// invalid root name
-		else
-		{
-			//error(3, "", name);
-			error(3, "root", name);
-		}
+		else{ error(3, "root", name); }
 	}
 	// validate node
 	else if (mid == false)
 	{
-		//Serial.println(F("Validating node"));
-		// for the valid root name
-		if (start != ':')
+		if (start != ':'){ error(1, menuRoot, ":"); }
+		else if (
+					((menuRoot == SYSTEM || menuRoot == SYST) && // system conditions
+						(name == AUTOMATIC || name == AUTO )
+					)
+					|| ((menuRoot == SOURCE) && (name == PUMP) // source conditions
+					)// ***WHAT ABOUT METER***
+				)// end if conditions
 		{
-			error(1, menuRoot, ":");
-		}
-		else if (name == FREQUENCY || name == PUMP)
-		{
-			if (stop != ':')
-			{
-				error(2, ":", name);
-			}
+			if (stop != ':'){ error(2, ":", name); }
 			else { menuNode = name; } // set node
 		}
 
-		else { //error(3, "", name);
-					error(3, "mid", name);}
+		else { error(3, "mid", name); }
 	}
 	// validate leaf node
 	else if (leaf == false)
 	{
-		//Serial.println(F("Validating leaf node"));
-		if (start != ':')
-		{
-			error(1, menuNode, ":");
-		}
-		else if ((menuNode == FREQUENCY && (name == START || name == STOP || name == SCALE || name == HOLD || name == INTERVAL || name == PPP
-			|| name == SWEEP || name == SWE))                               // frequency nodes
-			|| (menuNode == PUMP && (name == VOLUME || name == TIME))       // pump nodes
-			|| (menuNode == " " && (name == VOLTAGE || name == WAVETYPE)))  // other source nodes
+		if (start != ':'){ error(1, menuNode, ":"); }
+		else if (
+			((menuRoot == SYSTEM  || menuRoot == SYST) &&  // system conditions
+				((menuNode == " " && (name == RESET))
+				|| ((menuNode == AUTOMATIC || menuNode == AUTO) && 
+					(name == STARTFREQUENCY || name == STARTFREQ || name == STOPFREQUENCY || name == STOPFREQ || name == SCALE
+					|| name == HOLD || name == POINTS || name == PPP || name == EXPERIMENT || name == EXP))
+				)
+			)						// end system conditions
+			|| (menuRoot == SOURCE &&	// begin source conditions
+				((menuNode == " " && (name == FREQUENCY || name == FREQ || name == VOLTAGE || name == VOLT
+				|| name == WAVETYPE || name == WAVE || name == LAMP))
+				|| ((menuNode == PUMP) && 
+				(name == VOLUME || name == VOL || name == TIME || name == POWER || name == POW)
+				)
+				)
+			)							// end source conditions
+			//***ADD METER CONDITIONS***
+			) // end if conditions
 		{
 			if (stop != ' ' && stop != '?')
 			{
@@ -112,22 +115,13 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& v
 				if (stop == '?') { qry = true; ; }//Serial.println(F("qry set")); }
 			}
 		}
-		else { //error(3, "", name);
-					error(3, "leaf", name);}
+		else { error(3, "leaf", name); }
 	}
 	// validade value node
 	else if (val == false)
 	{
-		//Serial.println(F("Validating leaf node"));
-		if (start != ' ')
-		{
-			error(1, menuNode, " ");
-		}
-		else if (stop != ';')
-		{
-			error(2, "", name);
-		}
-		// else value node syntax is valid
+		if (start != ' '){ error(1, menuNode, " "); }
+		else if (stop != ';'){ error(2, "", name); }
 	}
 }
 
@@ -135,38 +129,47 @@ void Menu::validateNode(String& name, bool& root, bool& mid, bool& leaf, bool& v
 void Menu::query(String& param)
 {
 	//Serial.println("Querying " + param);
+	//if (menuLeaf == START ){src.getFreq(START);}
 	qry = false;
 }
 
-void Menu::assign(String& val)
+void Menu::select(String& val)
 {
-	//Serial.println("Assigning " + val); // test
-	if (menuLeaf == START) { src.setFreq(START, val); }
-	else if (menuLeaf == VOLTAGE) { src.setAmp(val); }
-	else if (menuLeaf == WAVETYPE) { src.setWave(val); }
-	else if (menuLeaf == STOP) { src.setFreq(STOP, val); }
-	else if (menuLeaf == SCALE) { src.setScale(val); }
-	else if (menuLeaf == HOLD) { src.setHold(val); }
-	else if (menuLeaf == INTERVAL) { src.setPoints(val); }
-	else if (menuLeaf == SWEEP || menuLeaf == SWE) { src.sweep(val); }
-	else if (menuLeaf == VOLUME || menuLeaf == VOL) { src.setPumpFlow(val); }
-	else if (menuLeaf == TIME) { src.setPumpTime(val); }
-	//else {} error invalid command (no need for this since error should have been detected by now)
-	//Serial.println(val + " has been assigned"); // test
+	int actionid;
+
+	// determine action number
+	if (menuLeaf == RESET) { actionid = 1; }
+	else if (menuLeaf == STARTFREQUENCY || menuLeaf == STARTFREQ)	{ actionid = 2; }
+	else if (menuLeaf == STOPFREQUENCY || menuLeaf == STOPFREQ)		{ actionid = 3; }
+	else if (menuLeaf == SCALE) { actionid = 4; }
+	else if (menuLeaf == POINTS){ actionid = 5; }
+	else if (menuLeaf == HOLD)	{ actionid = 6; }
+	else if (menuLeaf == PPP)	{ actionid = 7; }
+	else if (menuLeaf == EXPERIMENT || menuLeaf == EXP)	{ actionid = 8; }
+	else if (menuLeaf == FREQUENCY|| menuLeaf == FREQ)	{ actionid = 9; }
+	else if (menuLeaf == VOLTAGE || menuLeaf == VOLT)	{ actionid = 10; }
+	else if (menuLeaf == WAVETYPE || menuLeaf == WAVE)	{ actionid = 11; }
+	else if (menuLeaf == LAMP)							{ actionid = 12; }
+	else if (menuLeaf == VOLUME || menuLeaf == VOL)		{ actionid = 13; }
+	else if (menuLeaf == TIME)							{ actionid = 14; }
+	else if (menuLeaf == POWER || menuLeaf == POW)		{ actionid = 15; }
+	else { actionid = 0; Serial.println("Error in selcting method"); } // Default: do nothing
+	
+	sys.enact(actionid, val); // specify action for system to take
 }
 
 // error statements
 void Menu::error(int s, String m, String n)
 {
 	err = true;
-	Serial.println(F(""));
+	//Serial.println(F(""));
 
 	// select the appropriate error statement
 	switch (s)
 	{
 		case 1: Serial.println("Error: Expected \"" + m + "\" before node \"" + n + "\""); break;
 		case 2: Serial.println("Error: Expected \"" + m + "\" after node \"" + n + "\""); break;
-		case 3: Serial.println("Error: Invalid node name \"" + n + "\"" + "(" + m + ")"); break;
+		case 3: Serial.println("Error: Invalid node name \"" + n + "\"" + "(" + m + "), root node is " + menuRoot); break;
 		//case 4: Serial.println(F("")); break;
 		//case 5: Serial.println(F("Error: ")); break;
 		default: Serial.println(F("Error: Invalid command.")); break;

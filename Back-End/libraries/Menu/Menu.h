@@ -1,33 +1,4 @@
-
-// root nodes
-#define SYSTEM		"SYSTem"	// unused
-#define SOURCE		"SOURce"
-
-// nodes
-	//source/
-#define	FREQUENCY	"FREQuency"
-#define WAVETYPE	"WAVEtype" // Don't need this?
-#define PUMP		"PUMP"
-
-// leaf nodes
-//syst/
-#define RESET		"RESEt" // not yet implemented
-//source/frequency/
-#define START		"STARt"
-#define STOP		"STOP"
-#define SCALE		"SCALe"
-#define HOLD		"HOLD"
-#define INTERVAL	"INTErval"
-#define PPP			"PPPOINt" // not yet implemented
-#define SWEEP		"SWEEP"
-#define SWE         "SWE"
-//source/
-#define VOLTAGE		"VOLTage"
-#define WAVETYPE	"WAVEtype"
-//source/pump/
-#define VOLUME		"VOLUme" // not yet implemented
-#define VOL			"VOL"
-#define TIME		"TIMEr" // not yet implemented
+#include "NodeList.h" // list of command nodes
 
 class Menu
 {
@@ -36,15 +7,13 @@ public:
 
 	bool err;
 	bool qry;
-
-	void setSource();
-	void validateNode(String&, bool&, bool&, bool&, bool&, char&, char&);
-	void error(int, String, String);	// print requested error statement
+	
+	void setInstrument();
 	void reset();
-	void setRoot(String&);
-	void goToMenu(String&); // call menu for node
+	void validateNode(String&, bool&, bool&, bool&, bool&, char&, char&);
 	void query(String&);
-	void assign(String&);
+	void select(String&);
+	void error(int, String, String);	// print requested error statement
 private:
 
 	String menuRoot;

@@ -1,9 +1,9 @@
-### Instrument Commands
+## Instrument Commands
 The instrument accepts SCPI-style control commandss through the serial port. Although the framework is in place for supporting query commands (where the controller returns a parameter value), the methods for enacting the commands are yet to be implemented.
 
 
 
-## Command Tree
+### Command Tree
 ```
 :SYSTEM(SYST)
     :RESEt

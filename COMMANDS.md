@@ -1,4 +1,12 @@
 ```
-:SOURce:FREQuency:STARt 5000
-  :TEST(test2)
+:SYSTEM(SYST)
+    :RESEt
+    :AUTOmatic(AUTO)
+        :STARtFREQuency(STARtFREQ)
+        :STOPFREQuency(STOPFREQ)
+        :SCALe
+        :HOLD
+        :POINTs
+        :PPPOINt
+        :EXPEriment(EXP)
 ```

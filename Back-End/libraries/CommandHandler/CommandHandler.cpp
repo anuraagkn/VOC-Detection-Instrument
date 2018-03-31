@@ -3,7 +3,7 @@
 #include "Arduino.h"
 #include "CommandHandler.h"
 #include "Menu.h"
-#include "SPI.h"
+#include <SPI.h>
 
 Menu mn; // create menu object
 
@@ -18,10 +18,12 @@ void CommandHandler::boot()
 	// Arduino
 	SPI.begin();		// initialise SPI bus
 
-	Serial.begin(9600);	// open serial port once instrument has been setup
+//	Serial.begin(9600);	// open serial port once instrument has been setup
+	Serial.begin(19200);	// open serial port once instrument has been setup
 
 	reset();			// reset CommandHandler parameters
-	mn.setSource();	// initialise function generator parameters
+	mn.reset();
+	mn.setInstrument();	// initialise function generator parameters
 }
 
 // reset flags
@@ -35,7 +37,8 @@ void CommandHandler::reset()
 	front		= false;						// start marker not
 	back   		= false;						// stop marker not set
 	//end_cmmd	= false;
-	Serial.println(F("<INSTRUMENT IS READY>"));	// status message
+	//Serial.println(F("<INSTRUMENT IS READY>"));	// status message
+	Serial.println(F("<READY>"));	// status message
 }
 
 // decode and implement a command
@@ -45,7 +48,7 @@ void CommandHandler::processCommand()
 	if (Serial.available() > 0)
 	{
 		//delayMicroseconds(25000); // allow time for entire command to be received by Arduino
-        delay(200);
+        delay(100);
 
 		// set root node
 		if (root_node == false)
@@ -54,25 +57,20 @@ void CommandHandler::processCommand()
 			tempNode = readNode(); // read root node
 			setNode(tempNode, root_node);
 		}
-
 		// set next node
 		else if (mid_node == false)
 		{
 			//Serial.println(F("Reading node"));
 			tempNode = readNode(); // read node
 
-			if (tempNode == VOLTAGE || tempNode == WAVETYPE)
+			if (tempNode == RESET || tempNode == FREQUENCY || tempNode == FREQ || tempNode == VOLTAGE || tempNode == VOLT || tempNode == WAVETYPE || tempNode == WAVE || tempNode == LAMP) // replace this with mn.checkNodeLevel()
 			{
 				mid_node = true;
 				setNode(tempNode, leaf_node);
 			}
-
 			else
-			{
-				setNode(tempNode, mid_node);
-			}
+			{ setNode(tempNode, mid_node); }
 		}
-
 		// set leaf node
 		else if (leaf_node == false)
 		{
@@ -80,26 +78,22 @@ void CommandHandler::processCommand()
 			tempNode = readNode(); // read leaf node
 			setNode(tempNode, leaf_node);
 		}
-
 		// read assign the parameter value
 		else if (mn.qry == false && val_node == false)
 		{
 			tempNode = readNode();	// get param value
 			setNode(tempNode, val_node);
-			mn.assign(tempNode);	// set param
+			mn.select(tempNode);	// set param
 
 			// reset command handler flags
 			reset();
 			mn.reset();
 		}
 	}
-
 	// query the parameter
 	else if (mn.qry == true)
 	{
-		// call query method in mn
-		mn.query(tempNode);
-
+		mn.query(tempNode); // call query method in mn
 		// reset command handler flags
 		reset();
 		mn.reset();
@@ -118,7 +112,8 @@ String CommandHandler::readNode()
 		rc = Serial.read(); // read next char
 
 		// if char is not a marker, add to array
-		if (rc != beginMarker && rc != endMarker && rc != spaceMarker && rc != queryMarker && rc != openMarker && rc != closeMarker)
+		if (rc != beginMarker && rc != endMarker && rc != spaceMarker
+            && rc != queryMarker && rc != openMarker && rc != closeMarker)
 		{
 			node[ndx] = rc;
 			ndx++;
@@ -133,13 +128,11 @@ String CommandHandler::readNode()
 			else if (back == false) { backMarker = rc; back = true; }
 		}
 	}
-
 	// clear array at end of command
 	if (Serial.available() == 0 && rc != queryMarker)
 	{
 		node[ndx] = '\0'; ndx = 0;
 	}
-
 	//Serial.println("Node read as " + String(node));
 	return String(node);
 }
@@ -158,8 +151,9 @@ void CommandHandler::setNode(String& node, bool& node_flag)
 	}
 	else
 	{
-		node_flag = true;
+		node_flag = true; // mark node as set
 
+		// generate the node name for the status message
 		String nodeName;
 
 		if		(val_node == true)	{ nodeName = "Value"; }
@@ -168,7 +162,7 @@ void CommandHandler::setNode(String& node, bool& node_flag)
 		else if (root_node == true)
 		{
 			nodeName = "Root";
-			rdy = false;
+			rdy = false;    // currently handling a command so cannot read any more
 			//if (rdy == false) { Serial.println(F("Not ready")); }
 		}
 		//Serial.println(nodeName + " set to " + tempNode);

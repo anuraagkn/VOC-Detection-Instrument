@@ -4,7 +4,7 @@ The instrument accepts SCPI-style control commandss through the serial port. Alt
 When processing commands, the instrument seprates nodes by looking at the placement of specific markers (```:```, ```<BLANKSPACE>``` and ```;```), so a valid argument should not include any of these markers, else the instrument will render the command erroneous.
 
 ### Command Tree
-Below is the structure to follow when oprating the instrument using commands. Where available, any shorthand node names are enclosed in parenthesis next to their full form names e.g. ```AUTOmatic(AUTO)``` means that ```AUTO``` is the shorthand for ```AUTOmatic```. The valid arguments are specified in the comments, which begin after ```//```
+Below is the structure to follow when oprating the instrument using commands. Where available, any shorthand node names are enclosed in parenthesis next to their full form names e.g. ```AUTOmatic(AUTO)``` means that ```AUTO``` is the shorthand for ```AUTOmatic```. The valid arguments are specified in the comments, which begin after ```//```.
 
 ```
 :SYSTEM(SYST)
@@ -18,13 +18,13 @@ Below is the structure to follow when oprating the instrument using commands. Wh
         :PPPOINt                        // specify whether to resample the analyte at each frequency point
         :EXPEriment(EXP)                // run an automated experiment
 :SOURce
-    :FREQuency(FREQ)
-    :VOLTage(VOLT)
-    :WAVEtype(WAVE)
-    :LAMP
+    :FREQuency(FREQ)                    // set the frequency of the excitation waveform
+    :VOLTage(VOLT)                      // set the voltage of the excitation waveform
+    :WAVEtype(WAVE)                     // set the waveform type of the excitation waveform
+    :LAMP                               // set the brightness of the optical input into the LC cell
     :PUMP
-        :VOLUme(VOL)
-        :TIME
-        :POWEr(POW)
+        :VOLUme(VOL)                    // set the analyte pump speed in terms of volume per time unit
+        :TIME                           // set analyte sampling time
+        :POWEr(POW)                     // turn on and run the pump for the specified sampling time
 ADD METER LATER
 ```

@@ -6,6 +6,7 @@ When processing commands, the instrument seprates nodes by looking at the placem
 ### Command Tree
 Below is the structure to follow when oprating the instrument using commands. Where available, any shorthand node names are enclosed in parenthesis next to their full form names e.g. ```AUTOmatic(AUTO)``` means that ```AUTO``` is the shorthand for ```AUTOmatic```. The valid arguments are specified in the comments, which begin after ```//```.
 
+System commands can be used to reset the instrument and setup/run automated experiments.
 ```
 :SYSTEM(SYST)
     :RESEt                              // reset the isntrument parameters (accepts any valid argument*)
@@ -17,14 +18,21 @@ Below is the structure to follow when oprating the instrument using commands. Wh
         :POINTs                         // set the number of frequency points to take measurements at
         :PPPOINt                        // specify whether to resample the analyte at each frequency point
         :EXPEriment(EXP)                // run an automated experiment
+```
+
+Source commands can be used to set LC cell input parameters such as optical intensity, analyte sampling time/speed and excitation waveform parameters.
+```
 :SOURce
     :FREQuency(FREQ)                    // set the frequency of the excitation waveform
     :VOLTage(VOLT)                      // set the voltage of the excitation waveform
     :WAVEtype(WAVE)                     // set the waveform type of the excitation waveform
-    :LAMP                               // set the brightness of the optical input into the LC cell
+    :LAMP                               // set the intensity of the optical input into the LC cell
     :PUMP
         :VOLUme(VOL)                    // set the analyte pump speed in terms of volume per time unit
         :TIME                           // set analyte sampling time
         :POWEr(POW)                     // turn on and run the pump for the specified sampling time
+```
+
+```
 ADD METER LATER
 ```

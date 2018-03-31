@@ -5,9 +5,11 @@ Appropriate functions are called from the Menu class when a :SOURce command reci
 
 */
 
-#include "Arduino.h"
+//#include "Arduino.h"
 #include "Source.h"
-#include <math.h> // log() function for sweep
+//#include <math.h> // log() function for sweep
+
+MCP6S21 PGA(10);    // *need to change the pin value*
 
 Source::Source()
 {
@@ -16,14 +18,52 @@ Source::Source()
 
 //======================== PUMP METHODS ==========================
 
-void Source::setPumpFlow(String vol)
+// set air flow into LC cell
+void Source::setPumpFlow(String v)
 {
+    vol = v.toInt();
+    switch(vol)
+    {
+        case 1: vol = 250; break;
+        case 2: vol = 200; break;
+        case 3: vol = 150; break;
+        case 4: vol = 100; break;
+        case 5: vol = 50; break;
+        default: vol = 150; break;
+    }
+
+    // CONVERT TO DUTY CYCLE VALUE (volDuty?)
+
+    Serial.println("flow=" + String(vol));
 
 }
 
-void Source::setPumpTime(String vol)
+// set pump time
+void Source::setPumpTime(String t)
 {
+    time = t.toFloat() * 1000; // convert seconds to milliseconds
+    Serial.println("pumptime=" + String(time) + "ms");
+}
 
+// pump air for the defined time at the defined flow level
+void Source::pump(String p, float t)
+{
+    // MAYBE DO THE CONVERSION HERE?
+
+   if (p == "ON")
+   {
+        Serial.println(F("pumpon"));
+        //analogWrite(PWM, volDuty);
+        pinMode(9,OUTPUT);
+        analogWrite(9, vol);
+        delay(t); // pump for specified time
+        analogWrite(9, 0); // stop pumping
+        Serial.println(F("pumpoff"));
+    }
+    else
+    {
+        Serial.println("Error: Invalid argument " + p + ". Expected \"ON\".");
+    }
 }
 
 //================================================================
@@ -47,8 +87,13 @@ void Source::AD9833Write(int data)
 // ========================== Function Generator Methods ==========================
 // ================================================================================
 
+void Source::getFreq(String s)
+{
+    if (s == "STARt"){Serial.println(freq);}
+}
+
 // set input waveform frequency
-void Source::setFreq(String s, String f)
+void Source::setFreq(String f)
 {
 	if (f.toFloat() < 0.0 || f.toFloat() > 12500000.0)	// check for valid frequency
 	{
@@ -56,44 +101,40 @@ void Source::setFreq(String s, String f)
 	}
 	else // frequency is valid so assign it
 	{
-		if (s == "STARt")				// assign start frequency
-		{
-			freq = f.toFloat();			// convert to float and set
-			long freqWord = (freq * pow(2, 28)) / CLK_AD9833;
-			// set the frequency value on the 9833
-			int MSB = (int)((freqWord & 0xFFFC000) >> 14);    //Only lower 14 bits are used for data
-			int LSB = (int)(freqWord & 0x3FFF);
-			//Set control bits 15 ande 14 to 0 and 1, respectively, for frequency register 0
-			LSB |= 0x4000;
-			MSB |= 0x4000;
-			// write data
-			AD9833Write(0x2100);
-			AD9833Write(LSB);     // Write lower 16 bits to AD9833 registers
-			AD9833Write(MSB);     // Write upper 16 bits to AD9833 registers.
-			AD9833Write(0xC000);  // Phase register
-			SPI.setDataMode(SPI_MODE2); // set AD9833 SPI mode
-			AD9833Write(wave);    // Exit & Reset to wave
+		freq = f.toFloat();			// convert to float and set
+		long freqWord = (freq * pow(2, 28)) / CLK_AD9833;
+		// set the frequency value on the 9833
+		int MSB = (int)((freqWord & 0xFFFC000) >> 14);    //Only lower 14 bits are used for data
+		int LSB = (int)(freqWord & 0x3FFF);
+		//Set control bits 15 ande 14 to 0 and 1, respectively, for frequency register 0
+		LSB |= 0x4000;
+		MSB |= 0x4000;
+		// write data
+		AD9833Write(0x2100);
+		AD9833Write(LSB);     // Write lower 16 bits to AD9833 registers
+		AD9833Write(MSB);     // Write upper 16 bits to AD9833 registers.
+		AD9833Write(0xC000);  // Phase register
+		SPI.setDataMode(SPI_MODE2); // set AD9833 SPI mode
+		AD9833Write(wave);    // Exit & Reset to wave
 
-			Serial.println("Start freq set to " + String(freq));
-		}
-		else if (s == "STOP")			// assign stop frequency
-		{
-			fstop = f.toFloat();		// convertto float and set
-			Serial.println("Stop freq set to " + String(fstop));
-		}
+		Serial.println("freq=" + String(freq));
 	}
-	//String freqString = String(freq);
-	//Serial.println("Frequency set to " + freqString + "Hz"); // test
 }
 
 // set waveform amplitude by adjusting the potentiometer step
 void Source::setAmp(String a)
 {
-	int n;
-	ampl = a.toFloat(); // set amplitude variable. This can be returned in a query
-	Serial.println("Amplitude set to " + String(ampl) + "V");
-    potWrite(CS_AMP, round(a.toFloat()) ); // need to determine cs
-    Serial.println("Pot pin set to " + String(a));
+	ampl = a.toInt(); // set amplitude variable. This can be returned in a query
+    switch(ampl)
+    {
+        case 1: PGA.gain(x1); displayValue = 3.84; break;
+        case 2: PGA.gain(x2); displayValue = 7.04; break;
+        case 3: PGA.gain(x4); displayValue = 14.0; break;
+        case 4: PGA.gain(x5); displayValue = 17.8; break;
+        case 5: PGA.gain(x8); displayValue = 28.4; break;
+        default: Serial.println(F("Error: Invalid amplitude level. Valid range is 1-5")); break;
+    }
+    Serial.println("v=" + String(displayValue));// + " ampl = " + String(ampl));
 }
 
 // set input waveform wavetype
@@ -107,40 +148,18 @@ void Source::setWave(String w)
 
 		SPI.setDataMode(SPI_MODE2); // set AD9833 SPI mode
 		AD9833Write(wave);        // tell the 9833 the register value
-		Serial.println("Wave type set to " + w);
+		Serial.println("type=" + w);
 	}
 	else { Serial.println(F("Error: Invalid waveform. Please enter a command with a valid waveform choice (SINE?, SQUARE?, TRIANGLE?).")); }
 }
-
-// set scale for frequency sweep
-void Source::setScale(String s)
-{
-	scale = s;
-	Serial.println("Scale set to " + scale);
-}
-
-// set number of frequency points in the sweep
-void Source::setPoints(String n)
-{
-	points = n.toFloat();
-	Serial.println("Interval set to " + String(points));
-}
-
-// set the time to wait at each frequency point in the sweep
-void Source::setHold(String h)
-{
-	hold = 1000 * h.toFloat();	// convert to milliseconds
-	Serial.println("Hold set to " + String(hold));
-}
-
+/*
 // sweep the defined frequency range
 // called when user initiates frequency sweep
-//GUI: Don't write start freq until sweep called
 void Source::sweep(String b)
 {
 	if (b == "BEGIn")
 	{
-		delay(1000);
+		delay(1000);                // WHAT'S THE POINT OF THIS?
 		int x = 0;                  // sweep point counter
 		float fstart = freq;        // set start frequency (cant use freq - it will be modified during the loop)
 		float span = fstop - freq;  // frequency span of the sweep
@@ -150,18 +169,30 @@ void Source::sweep(String b)
         // sweep through the frequency range(span)
 		while (x <= (points - 1))
         {
-            // if pump = yes
-                // set freq = 0 and stop recording results
-                // turn pump on (with some speed)
-                // hold for user defined time
-                // turn pump off
+
+            // pump per frequency point if user desires
+            if (pppoint == "Y")
+            {
+                setFreq(String("STARt"), String(0)); // set freq = 0
+                // and stop recording results
+                pump("ON"); // pump air based on user-defined parameters
+
+                // after pump finished, frequency will be set to fsweep in the code below.
+                // so no need to restore it here.
+            }
 
             // compute frequency increment based on scale
             if (scale == "LIN"){ fsweep = fstart + x * (span / (points - 1)); }// fstart + x*(span/npoints)
             else if (scale == "LOG"){ fsweep = fstart + span * log(x+1)/log(points); }
 
             setFreq(String("STARt"), String(fsweep));   // set freq to fsweep
+
+            // start recording results
+
             delay(hold);                                // hold frequency for defined time period
+
+            // stop recording results
+
             x++;                                        // increment sweep point count
         }
         // reset freq to initial when finished sweep
@@ -169,7 +200,7 @@ void Source::sweep(String b)
 	}
 	else{ Serial.println("Error: invalid command " + b); } // if arg != BEGIn
 }
-
+*/
 // write data to the selected digital potentiometer
 void Source::potWrite(int cs, int data)
 {
@@ -177,4 +208,19 @@ void Source::potWrite(int cs, int data)
 	SPI.transfer(ADDR);
 	SPI.transfer(data);
 	digitalWrite(cs, HIGH);
+}
+
+// set the brightness level of the LED
+void Source::setLamp(String l)
+{
+    lamp = l.toInt();
+    if (lamp < 0 || lamp > 200)
+    {
+		Serial.println("Error: Lamp brightness "  + String(lamp) + " is out of range. Range is 0 - 200.");
+	}
+	else
+    {
+        potWrite(CS_LED, lamp); // write value to pot
+        Serial.println("lamp=" + String(lamp));
+   }
 }

@@ -4,7 +4,7 @@ The instrument accepts SCPI-style control commandss through the serial port. Alt
 When processing commands, the instrument seprates nodes by looking at the placement of specific markers (```:```, ```<BLANKSPACE>``` and ```;```), so a valid argument should not include any of these markers, else the instrument will render the command erroneous.
 
 ### Command Tree
-Below is the structure to follow when oprating the instrument using commands. Where available, any shorthand node names are enclosed in parenthesis next to their full form names e.g. ```AUTOmatic(AUTO)``` means that ```AUTO``` is the shorthand for ```AUTOmatic```.
+Below is the structure to follow when oprating the instrument using commands. Where available, any shorthand node names are enclosed in parenthesis next to their full form names e.g. ```AUTOmatic(AUTO)``` means that ```AUTO``` is the shorthand for ```AUTOmatic```. The valid arguments are specified in the comments, which begin after ```//```
 
 ```
 :SYSTEM(SYST)

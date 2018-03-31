@@ -4,7 +4,7 @@ The instrument accepts SCPI-style control commandss through the serial port. Alt
 
 
 ### Command Tree
-Below is the structure to follow when oprating the instrument using commands. Where available, any shorthand node names are enclosed in parenthesis next to their full form names e.g. '''AUTOmatic(AUTO)''' means that '''AUTO''' is the shorthand for '''AUTOmatic'''.
+Below is the structure to follow when oprating the instrument using commands. Where available, any shorthand node names are enclosed in parenthesis next to their full form names e.g. ```AUTOmatic(AUTO)``` means that ```AUTO``` is the shorthand for ```AUTOmatic```.
 
 ```
 :SYSTEM(SYST)

@@ -27,17 +27,18 @@ What things you need to install the software and how to install them
 Command the instrument using the Serial Monitor. Parameters can be set or queried. Example:
 
 ```
-:SOURce:FREQuency:STARt 5000
+:SOURce:FREQuency: 5000
 ```
 
-sets the source frequency, and the start frequency of the sweep to 5000Hz.
+sets the excitation waveform frequency to 5000Hz.
 
 ```
-:SOURce:FREQuency:STARt?
+:SOURce:FREQuency?
 ```
 Returns the source frequency.
 
 A full list of commands is available at: (Coming Soon)
+A document detailing the available commands is available [here](https://github.com/anuraagkn/VOC-Detection-Instrument/blob/master/COMMANDS.md).
 
 ## Built With
 

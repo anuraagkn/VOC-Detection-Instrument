@@ -32,7 +32,8 @@ Source commands can be used to set LC cell input parameters such as optical inte
         :TIME                           // set analyte sampling time
         :POWEr(POW)                     // turn on and run the pump for the specified sampling time
 ```
-
+Meter commands can be used to analyse the LC cell output and transmit data to the GUI platform.
 ```
-ADD METER LATER
+:METEr
+    :ANALyse                            // measure the output waveform, perform an fft and transmit the data to the front-end
 ```

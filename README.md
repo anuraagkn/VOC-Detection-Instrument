@@ -8,16 +8,25 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
+What things you need to install the software and how to install them.
 
-* Arduino IDE with SPI library. See https://www.arduino.cc/en/Main/Software
+#### Hardware
+
+#### Back-End
+* Arduino IDE (includes Arduino, SPI and math libraries). See https://www.arduino.cc/en/Main/Software
+* Additional libraries: arduinoFFT (download through Arduino IDE library manager), MCP6S21 (coming to repo soon).
+
+#### Back-End
 * Anaconda3 (includes PyQt5) to run front-end Python GUI.
+
 
 ### Installing
 
+
+
 #### Back-End
 1. Download the Controller folder and save it in a suitable location.
-2. Save the CommandHandler, Menu and Source libraries in the library directory of your Arduino IDE installation.
+2. Save the CommandHandler, Menu, Source, NodeList and MCP6S21 folders in the library directory of your Arduino IDE installation.
 3. From the Controller folder open Controller.ino in the Arduino IDE, then compile the sketch and load it onto an Arduino board.
 
 #### Front-End (Coming Soon)

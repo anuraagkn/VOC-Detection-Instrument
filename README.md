@@ -66,3 +66,4 @@ See also the list of [contributors](https://github.com/anuraagkn/VOC-Detection-I
 * Kaspars Tuna (**contact info**) for providing LED brightness and pump flow control code.
 * Michael Nwokedi (**contact info**) for providing code for the gain-controlled voltage amplifier.
 * Elliot Page (**contact info**) for providing output signal sampling code.
+* Nadia Jasman (**contact info**) for providing code for contour plotting.

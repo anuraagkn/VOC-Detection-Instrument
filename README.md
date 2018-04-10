@@ -63,6 +63,6 @@ See also the list of [contributors](https://github.com/anuraagkn/VOC-Detection-I
 ## Acknowledgments
 
 * Project Supervisor Dr Kai Hoettges (**contact info**) for continuing support, and Dr Ian Sandall (**contact info**) for additional feedback.
-* Kaspars Tuna (**contact info**) for initial LED brightness and pump flow control code.
-* Michael Nwokedi (**contact info**) for initial code for the gain-controlled voltage amplifier.
-* Elliot Page (**contact info**) for 
+* Kaspars Tuna (**contact info**) for providing LED brightness and pump flow control code.
+* Michael Nwokedi (**contact info**) for providing code for the gain-controlled voltage amplifier.
+* Elliot Page (**contact info**) for providing output signal sampling code.

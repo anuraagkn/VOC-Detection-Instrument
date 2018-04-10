@@ -17,12 +17,10 @@ What things you need to install the software and how to install them.
 * Additional libraries: arduinoFFT (download through Arduino IDE library manager), MCP6S21 (coming to repo soon).
 
 #### Back-End
-* Anaconda3 (includes PyQt5) to run front-end Python GUI.
-
+* Qt5 GUI library.
+* Anaconda3 (includes PyQt5 binding for Qt5) to run front-end Python GUI. (If using Raspberry Pi with Raspbian, Python3 is already installed, however PyQt5 must be installed seperately).
 
 ### Installing
-
-
 
 #### Back-End
 1. Download the Controller folder and save it in a suitable location.

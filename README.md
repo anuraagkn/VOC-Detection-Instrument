@@ -44,6 +44,13 @@ sets the excitation waveform frequency to 5000Hz.
 ```
 Returns the source frequency.
 
+You can also enter multiple commands on a single line, using ```;``` as a delimiter. For example:
+
+```
+:SYSTem:AUTOmatic:STARtFREQuency 1000;:SYSTem:AUTOmatic:STOPFREQuency 10000
+```
+Sets the start and stop frequenies for an automated experiment to 1,000Hz and 10,000Hz respectively.
+
 A full list of commands is available at: (Coming Soon)
 A document detailing the available commands is available [here](https://github.com/anuraagkn/VOC-Detection-Instrument/blob/master/COMMANDS.md).
 

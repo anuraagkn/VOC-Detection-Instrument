@@ -8,7 +8,7 @@ Below is the structure to follow when oprating the instrument using commands. Wh
 
 System commands can be used to reset the instrument and setup/run automated experiments.
 ```
-:SYSTEM(SYST)
+:SYSTem(SYST)
     :RESEt                              // reset the isntrument parameters (accepts any valid argument*)
     :AUTOmatic(AUTO)
         :STARtFREQuency(STARtFREQ)      // set the start frequency for an automated experiment
